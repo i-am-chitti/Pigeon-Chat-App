@@ -36,13 +36,17 @@ db.once("open", () => {
 
     changeStream.on('change', (change) => {
         if(change.operationType === 'insert') {
+            // console.log("insert event triggered");
             const msgDetails = change.fullDocument;
             // messages is a channel and inserted is the event that is going to be
             // triggered, on front side, just subscribe to this channel with this event 
             // to receive the update
             pusher.trigger('messages','inserted', {
+                id: msgDetails._id,
                 name: msgDetails.name,
-                message: msgDetails.message
+                message: msgDetails.message,
+                timestamp: msgDetails.timestamp,
+                received: msgDetails.received,
             });
         }
         else {
